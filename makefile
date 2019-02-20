@@ -1,6 +1,6 @@
 compiler := g++
 CppVersion := -std=c++17
-extraFlags := -O3 -Werror -Wall -Wextra
+extraFlags := -Ofast -Werror -Wall -Wextra
 
 
 CPPFLAGS := $(compiler) $(CppVersion) $(extraFlags)

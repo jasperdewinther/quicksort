@@ -1,66 +1,48 @@
-#include <iostream>
-#include <string>
-#include <array>
-#include <vector>
-#include <algorithm>
-#include <chrono>
-#include <thread>
-#include <random>
-#include <climits>
-#include <sys/resource.h>
+#include <iostream>     //used for output
+#include <array>        //to use quicksort on
+#include <algorithm>    //used for comparing with self made implementation
+#include <chrono>       //used for timing  
+#include <thread>       //also used for timing
+#include <random>       //used to generate random array
 
-
-template<typename T>
+/*template<typename T>
 void printStorage(const T & Storage){
     std::cout << "[ ";
     for(auto & x : Storage){
         std::cout << x << " ";
     }
     std::cout << "]\n";
-}
-
-template<typename T>
-inline void threeWaySwap(T & first, T & second, T & third){
-    std::swap(first, second);
-    std::swap(first, third);
-}
+}*/
 
 template<typename T>
 inline T* qsortMoving(T * begin, T * end){
     if (begin == end){
         return begin;
     }
-    int counter = 0;
-    while(counter != end-begin){
-        std::cout << *(begin+counter) << ',';
-        counter ++;
-    }
-    std::cout << *(begin+counter) << ',' << '\n';
     if(*begin > *end){
-        /*T firstChar = *begin;
-        *begin = *(end-1);
-        *(end-1) = *end;
-        *end = firstChar;*/
-        threeWaySwap(*end, *(end-1), *begin);
-        return qsortMoving(begin, end-1);
+        T beginCHar = *(begin);
+        *begin = *end;
+        *end = *(begin+1);
+        *(begin+1) = beginCHar;
+        return qsortMoving(begin+1, end);
     }
-    return qsortMoving(begin+1, end);
+    return qsortMoving(begin, end-1);
 }
 
 template<typename T>
-inline void quicksort(T * begin, T * end){
+inline void arrayQuicksort(T * begin, T * end){
     if( begin == end){
         return;
     }
     T* pivot = qsortMoving(begin, end-1);
-    quicksort(begin, pivot);
-    quicksort(pivot+1, end);
+    arrayQuicksort(begin, pivot);
+    arrayQuicksort(pivot+1, end);
 }
 
-std::array<int, 5>  bigRandomArray(){
+std::array<int, 100000>  bigRandomArray(){
     std::random_device rd;
-    std::uniform_int_distribution<int> dist(0, 100);
-    std::array<int, 5> ar;
+    std::uniform_int_distribution<int> dist(INT32_MIN, INT32_MAX);
+    std::array<int, 100000> ar;
     for(auto & i : ar){
         i = dist(rd);
     }
@@ -74,11 +56,11 @@ int main(){
     auto ogArray = bigRandomArray();
     auto ar = ogArray;
 
-    printStorage(ar);
+    //printStorage(ar);
     auto before = klok.now();
-    quicksort(ar.begin(), ar.end());
+    arrayQuicksort(ar.begin(), ar.end());
     auto after = klok.now();
-    printStorage(ar);
+    //printStorage(ar);
     std::cout << "own implementation: " << std::chrono::duration_cast<std::chrono::nanoseconds>(after-before).count() << "\n";
     
     ar = ogArray;
@@ -86,7 +68,6 @@ int main(){
     before = klok.now();
     std::sort(ar.begin(), ar.end());
     after = klok.now();
-    //printStorage(ar);
     std::cout << "std implementation: " << std::chrono::duration_cast<std::chrono::nanoseconds>(after-before).count() << "\n";
 
     ar = ogArray;
@@ -100,7 +81,6 @@ int main(){
         return 0;
     });
     after = klok.now();
-    //printStorage(ar);
     std::cout << "qso implementation: " << std::chrono::duration_cast<std::chrono::nanoseconds>(after-before).count() << "\n";
 
 
