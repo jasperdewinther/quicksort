@@ -1,6 +1,6 @@
 compiler := g++
 CppVersion := -std=c++17
-extraFlags := -Ofast -Werror -Wall -Wextra
+extraFlags := -Werror -Wall -Wextra -g -Ofast
 
 
 CPPFLAGS := $(compiler) $(CppVersion) $(extraFlags)
@@ -8,13 +8,14 @@ CPPFLAGS := $(compiler) $(CppVersion) $(extraFlags)
 SRC_DIR := ./src
 OBJ_DIR := ./obj
 SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
+HDR_FILES := $(wildcard $(SRC_DIR)/*.hpp)
 OBJ_FILES = $(patsubst src/%.cpp,obj/%.o,$(SRC_FILES))
 
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CPPFLAGS) -c $< -o $@
 
-program: $(OBJ_FILES)
+program: $(OBJ_FILES) $(HDR_FILES)
 	$(CPPFLAGS) $^ -o $@
 
 make:
